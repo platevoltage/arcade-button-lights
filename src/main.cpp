@@ -1,5 +1,6 @@
 #include <Adafruit_TLC5947.h>
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <FastLED.h>
 
 // How many boards do you have chained?
@@ -277,30 +278,76 @@ void fadeOut(int r[10], int g[10], int b[10], uint8_t amount = 255,
   }
 }
 
+// void loop() {
+//   if (Serial.available()) {
+//     int r[10], g[10], b[10];
+//     if (Serial.read() == '#') {
+//       // for (int i = 0; i < 10; i++) {
+//       //   r[i] = Serial.parseInt();
+//       //   g[i] = Serial.parseInt();
+//       //   b[i] = Serial.parseInt();
+//       // }
+//     }
+//     while (Serial.available())
+//       Serial.print(Serial.read());
+//     Serial.flush();
+
+//     // ring(r, g, b);
+//     // fadeIn(r, g, b, 255, 500, 2);
+//     // fadeOut(r, g, b, 255, 500, 2);
+//     fadeIn(r, g, b, 100, 1500, 3);
+//     fadeOut(r, g, b, 100, 1500, 3);
+//     // fadeIn(r, g, b, 255, 500, 4);
+//     // fadeOut(r, g, b, 255, 500, 4);
+//     // fadeIn(r, g, b, 20, 1000, 3);
+//     // fadeOut(r, g, b, 20, 1000, 3);
+//     // fadeIn(r, g, b, 80, 1000, 4);
+//     // fadeOut(r, g, b, 80, 1000, 4);
+//   }
+// }
+
+int rValues[10], gValues[10], bValues[10];
 void loop() {
   if (Serial.available()) {
-    int r[10], g[10], b[10];
-    if (Serial.read() == '#') {
-      for (int i = 0; i < 10; i++) {
-        r[i] = Serial.parseInt();
-        g[i] = Serial.parseInt();
-        b[i] = Serial.parseInt();
+    String jsonString = Serial.readStringUntil('\n'); // Wait for full line
+    StaticJsonDocument<512> doc;
+
+    DeserializationError error = deserializeJson(doc, jsonString);
+    if (error) {
+      Serial.println("JSON parse error");
+      return;
+    }
+
+    for (int i = 0; i < 10; i++) {
+      String key = "button" + String(i + 1);
+      const char *hex = doc[key];
+
+      if (hex && strlen(hex) >= 6) {
+        String hexStr(hex);
+        int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
+        int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
+        int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
+
+        rValues[i] = (r8 * 4095 + 127) / 255;
+        gValues[i] = (g8 * 4095 + 127) / 255;
+        bValues[i] = (b8 * 4095 + 127) / 255;
+      } else {
+        rValues[i] = gValues[i] = bValues[i] = 0;
       }
     }
-    Serial.flush();
-    while (Serial.available())
-      Serial.read();
 
-    // ring(r, g, b);
-    // fadeIn(r, g, b, 255, 500, 2);
-    // fadeOut(r, g, b, 255, 500, 2);
-    fadeIn(r, g, b, 100, 1500, 3);
-    fadeOut(r, g, b, 100, 1500, 3);
-    // fadeIn(r, g, b, 255, 500, 4);
-    // fadeOut(r, g, b, 255, 500, 4);
-    // fadeIn(r, g, b, 20, 1000, 3);
-    // fadeOut(r, g, b, 20, 1000, 3);
-    // fadeIn(r, g, b, 80, 1000, 4);
-    // fadeOut(r, g, b, 80, 1000, 4);
+    // Debug print
+    for (int i = 0; i < 10; i++) {
+      Serial.print("Button ");
+      Serial.print(i + 1);
+      Serial.print(": R=");
+      Serial.print(rValues[i]);
+      Serial.print(" G=");
+      Serial.print(gValues[i]);
+      Serial.print(" B=");
+      Serial.println(bValues[i]);
+    }
+
+    fadeIn(rValues, gValues, bValues, 255, 500, 3);
   }
 }
