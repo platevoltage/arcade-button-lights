@@ -58,163 +58,6 @@ void rainbowCycle(uint8_t wait) {
   }
 }
 
-void neogeo() {
-  tlc.setLED(0, 4095, 4095, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(1, 0, 4095, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(2, 0, 0, 4095);
-  tlc.write();
-  delay(100);
-  tlc.setLED(3, 0, 0, 0);
-  tlc.setLED(4, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 0, 0, 0);
-  tlc.setLED(6, 0, 0, 0);
-  tlc.setLED(7, 0, 0, 0);
-}
-
-void nes() {
-  tlc.setLED(0, 0, 0, 0);
-  tlc.setLED(1, 0, 0, 0);
-  tlc.setLED(2, 0, 0, 0);
-  tlc.setLED(3, 0, 0, 0);
-  tlc.setLED(4, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(6, 0, 0, 0);
-  tlc.setLED(7, 0, 0, 0);
-}
-
-void snes() {
-  tlc.setLED(0, 4095, 10000, 4095);
-  tlc.write();
-  delay(100);
-  tlc.setLED(1, 4095, 10000, 4095);
-  tlc.write();
-  delay(100);
-  tlc.setLED(2, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(3, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(4, 500, 0, 3000);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 500, 0, 3000);
-  tlc.write();
-  delay(100);
-  tlc.setLED(6, 0, 0, 0);
-  tlc.setLED(7, 0, 0, 0);
-}
-
-void superFamicom() {
-  tlc.setLED(0, 0, 4095, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(1, 0, 0, 4095);
-  tlc.write();
-  delay(100);
-  tlc.setLED(2, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(3, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(4, 4095, 4095, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(6, 0, 0, 0);
-  tlc.setLED(7, 0, 0, 0);
-}
-
-void segaGenesis() {
-  tlc.setLED(0, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(1, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(2, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(3, 0, 0, 0);
-  tlc.setLED(4, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(6, 4095, 0, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(7, 0, 0, 0);
-}
-
-void n64() {
-  tlc.setLED(0, 0, 4095, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(1, 4095, 2000, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(2, 4095, 2000, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(3, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(4, 0, 0, 4095);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 4095, 2000, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(6, 4095, 2000, 0);
-  tlc.write();
-  delay(100);
-  tlc.setLED(7, 500, 500, 500);
-  tlc.write();
-  delay(100);
-}
-
-void playstation() {
-  tlc.setLED(0, 4095, 10000, 2000);
-  tlc.write();
-  delay(100);
-  tlc.setLED(1, 10000, 4095, 10000);
-  tlc.write();
-  delay(100);
-  tlc.setLED(2, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(3, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(4, 10000, 10000, 4095);
-  tlc.write();
-  delay(100);
-  tlc.setLED(5, 4095, 100, 100);
-  tlc.write();
-  delay(100);
-  tlc.setLED(6, 500, 500, 500);
-  tlc.write();
-  delay(100);
-  tlc.setLED(7, 500, 500, 500);
-  tlc.write();
-  delay(100);
-}
-
 void ring(int r[10], int g[10], int b[10]) {
   for (int k = 0; k < 2; k++) {
     for (int j = 0; j < 8; j++) {
@@ -228,16 +71,6 @@ void ring(int r[10], int g[10], int b[10]) {
     }
   }
 }
-
-// void fadeIn(int r[10], int g[10], int b[10]) {
-//   for (int j = 100; j > 0; j--) {
-//     for (int i = 0; i < 10; i++) {
-//       tlc.setLED(i >= 8 ? i + 6 : i, r[i] / j, g[i] / j, b[i] / j);
-//     }
-//     delay(5);
-//     tlc.write();
-//   }
-// }
 
 void fadeIn(int r[10], int g[10], int b[10], uint8_t amount = 255,
             uint16_t speed = 500, int exponent = 2) {
@@ -277,34 +110,6 @@ void fadeOut(int r[10], int g[10], int b[10], uint8_t amount = 255,
     delay(5);
   }
 }
-
-// void loop() {
-//   if (Serial.available()) {
-//     int r[10], g[10], b[10];
-//     if (Serial.read() == '#') {
-//       // for (int i = 0; i < 10; i++) {
-//       //   r[i] = Serial.parseInt();
-//       //   g[i] = Serial.parseInt();
-//       //   b[i] = Serial.parseInt();
-//       // }
-//     }
-//     while (Serial.available())
-//       Serial.print(Serial.read());
-//     Serial.flush();
-
-//     // ring(r, g, b);
-//     // fadeIn(r, g, b, 255, 500, 2);
-//     // fadeOut(r, g, b, 255, 500, 2);
-//     fadeIn(r, g, b, 100, 1500, 3);
-//     fadeOut(r, g, b, 100, 1500, 3);
-//     // fadeIn(r, g, b, 255, 500, 4);
-//     // fadeOut(r, g, b, 255, 500, 4);
-//     // fadeIn(r, g, b, 20, 1000, 3);
-//     // fadeOut(r, g, b, 20, 1000, 3);
-//     // fadeIn(r, g, b, 80, 1000, 4);
-//     // fadeOut(r, g, b, 80, 1000, 4);
-//   }
-// }
 
 int rValues[10], gValues[10], bValues[10];
 void loop() {
@@ -351,3 +156,160 @@ void loop() {
     fadeIn(rValues, gValues, bValues, 255, 500, 3);
   }
 }
+
+// void neogeo() {
+//   tlc.setLED(0, 4095, 4095, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(1, 0, 4095, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(2, 0, 0, 4095);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(3, 0, 0, 0);
+//   tlc.setLED(4, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 0, 0, 0);
+//   tlc.setLED(6, 0, 0, 0);
+//   tlc.setLED(7, 0, 0, 0);
+// }
+
+// void nes() {
+//   tlc.setLED(0, 0, 0, 0);
+//   tlc.setLED(1, 0, 0, 0);
+//   tlc.setLED(2, 0, 0, 0);
+//   tlc.setLED(3, 0, 0, 0);
+//   tlc.setLED(4, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(6, 0, 0, 0);
+//   tlc.setLED(7, 0, 0, 0);
+// }
+
+// void snes() {
+//   tlc.setLED(0, 4095, 1000, 4095);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(1, 4095, 1000, 4095);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(2, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(3, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(4, 500, 0, 3000);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 500, 0, 3000);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(6, 0, 0, 0);
+//   tlc.setLED(7, 0, 0, 0);
+// }
+
+// void superFamicom() {
+//   tlc.setLED(0, 0, 4095, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(1, 0, 0, 4095);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(2, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(3, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(4, 4095, 4095, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(6, 0, 0, 0);
+//   tlc.setLED(7, 0, 0, 0);
+// }
+
+// void segaGenesis() {
+//   tlc.setLED(0, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(1, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(2, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(3, 0, 0, 0);
+//   tlc.setLED(4, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(6, 4095, 0, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(7, 0, 0, 0);
+// }
+
+// void n64() {
+//   tlc.setLED(0, 0, 4095, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(1, 4095, 2000, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(2, 4095, 2000, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(3, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(4, 0, 0, 4095);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 4095, 2000, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(6, 4095, 2000, 0);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(7, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+// }
+
+// void playstation() {
+//   tlc.setLED(0, 4095, 10000, 2000);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(1, 10000, 4095, 10000);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(2, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(3, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(4, 10000, 10000, 4095);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(5, 4095, 100, 100);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(6, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+//   tlc.setLED(7, 500, 500, 500);
+//   tlc.write();
+//   delay(100);
+// }
