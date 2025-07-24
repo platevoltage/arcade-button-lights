@@ -103,9 +103,13 @@ void fadeOut(int r[10], int g[10], int b[10], uint8_t amount = 255,
   }
 }
 
+int rValues[10], gValues[10], bValues[10];
+void go(void *pvParameters) {
+  fadeIn(rValues, gValues, bValues, 255, 500, 3);
+  vTaskDelete(NULL);
+}
 void lightsTask(void *pvParameters) {
   tlc.begin();
-  int rValues[10], gValues[10], bValues[10];
   while (1) {
     if (Serial.available()) {
       String jsonString = Serial.readStringUntil('\n'); // Wait for full line
@@ -146,8 +150,8 @@ void lightsTask(void *pvParameters) {
       //   Serial.print(" B=");
       //   Serial.println(bValues[i]);
       // }
-
-      fadeIn(rValues, gValues, bValues, 255, 500, 3);
+      // fadeIn(rValues, gValues, bValues, 255, 500, 3);
+      xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
     }
   }
 }
