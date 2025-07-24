@@ -13,6 +13,10 @@
 
 Adafruit_TLC5947 tlc = Adafruit_TLC5947(NUM_TLC5947, clock, data, latch);
 
+bool cancel = false;
+int r[10], g[10], b[10] = {0};
+StaticJsonDocument<512> doc;
+
 void Delay(int x) { vTaskDelay(pdMS_TO_TICKS(x)); }
 
 // Fill the dots one after the other with a color
@@ -64,8 +68,8 @@ void ring(int r[10], int g[10], int b[10]) {
   }
 }
 
-void fadeIn(int r[10], int g[10], int b[10], uint8_t amount = 255,
-            uint16_t speed = 500, int exponent = 2) {
+void fadeIn(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
+
   for (int j = speed; j > speed - speed * ((float)amount / 255.0); j--) {
     float fadeRatio =
         pow((speed - j) / (float)speed, exponent); // Cubic ease-in
@@ -75,6 +79,9 @@ void fadeIn(int r[10], int g[10], int b[10], uint8_t amount = 255,
       int gg = g[i] * fadeRatio;
       int bb = b[i] * fadeRatio;
       tlc.setLED(i >= 8 ? i + 6 : i, rr, gg, bb);
+      if (cancel) {
+        return;
+      }
     }
 
     tlc.write();
@@ -82,8 +89,7 @@ void fadeIn(int r[10], int g[10], int b[10], uint8_t amount = 255,
   }
 }
 
-void fadeOut(int r[10], int g[10], int b[10], uint8_t amount = 255,
-             uint16_t speed = 500, int exponent = 2) {
+void fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
 
   int steps = (float)speed * ((float)amount / 255.0);
 
@@ -96,6 +102,9 @@ void fadeOut(int r[10], int g[10], int b[10], uint8_t amount = 255,
       int gg = g[i] * fadeRatio;
       int bb = b[i] * fadeRatio;
       tlc.setLED(i >= 8 ? i + 6 : i, rr, gg, bb);
+      if (cancel) {
+        return;
+      }
     }
 
     tlc.write();
@@ -103,17 +112,47 @@ void fadeOut(int r[10], int g[10], int b[10], uint8_t amount = 255,
   }
 }
 
-int rValues[10], gValues[10], bValues[10];
 void go(void *pvParameters) {
-  fadeIn(rValues, gValues, bValues, 255, 500, 3);
+  cancel = true;
+  Delay(50);
+  cancel = false;
+  fadeOut(255, 100, 3);
+
+  for (int i = 0; i < 10; i++) {
+    String key = "button" + String(i + 1);
+    const char *hex = doc[key];
+
+    if (hex && strlen(hex) >= 6) {
+      String hexStr(hex);
+      int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
+      int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
+      int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
+
+      r[i] = (r8 * 4095 + 127) / 255;
+      g[i] = (g8 * 4095 + 127) / 255;
+      b[i] = (b8 * 4095 + 127) / 255;
+    } else {
+      r[i] = g[i] = b[i] = 0;
+    }
+  }
+
+  fadeIn(255, 500, 3);
+  vTaskDelete(NULL);
+}
+void stop(void *pvParameters) {
+  cancel = true;
+  Delay(50);
+  cancel = false;
+  fadeOut(255, 500, 3);
   vTaskDelete(NULL);
 }
 void lightsTask(void *pvParameters) {
   tlc.begin();
+  xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
   while (1) {
     if (Serial.available()) {
+
       String jsonString = Serial.readStringUntil('\n'); // Wait for full line
-      StaticJsonDocument<512> doc;
 
       DeserializationError error = deserializeJson(doc, jsonString);
       if (error) {
@@ -121,24 +160,7 @@ void lightsTask(void *pvParameters) {
         return;
       }
 
-      for (int i = 0; i < 10; i++) {
-        String key = "button" + String(i + 1);
-        const char *hex = doc[key];
-
-        if (hex && strlen(hex) >= 6) {
-          String hexStr(hex);
-          int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
-          int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
-          int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
-
-          rValues[i] = (r8 * 4095 + 127) / 255;
-          gValues[i] = (g8 * 4095 + 127) / 255;
-          bValues[i] = (b8 * 4095 + 127) / 255;
-        } else {
-          rValues[i] = gValues[i] = bValues[i] = 0;
-        }
-      }
-
+      xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
       // Debug print
       // for (int i = 0; i < 10; i++) {
       //   Serial.print("Button ");
@@ -151,7 +173,7 @@ void lightsTask(void *pvParameters) {
       //   Serial.println(bValues[i]);
       // }
       // fadeIn(rValues, gValues, bValues, 255, 500, 3);
-      xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
+      // xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
     }
   }
 }
