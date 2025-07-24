@@ -1,4 +1,5 @@
-#include "gamepad.h"
+// #include "gamepad.h"
+#include "keyboard.h"
 #include "lights.h"
 #include <Arduino.h>
 
@@ -11,7 +12,8 @@ void setup() {
   pinMode(L2_PIN, INPUT_PULLUP);
   pinMode(R2_PIN, INPUT_PULLUP);
 
-  Gamepad.begin();
+  // Gamepad.begin();
+  Keyboard.begin();
   USB.begin();
 
   xTaskCreate(lightsTask,   // Function to run
@@ -23,4 +25,7 @@ void setup() {
   );
 }
 
-void loop() { gamepadTask(); }
+void loop() {
+  // gamepadTask();
+  keyboardTask();
+}

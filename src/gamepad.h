@@ -4,14 +4,14 @@
 
 USBHIDGamepad Gamepad;
 
-#define BUTTON_PIN_0 1
-#define BUTTON_PIN_1 2
-#define BUTTON_PIN_2 3
-#define BUTTON_PIN_3 4
-#define BUTTON_PIN_4 5
-#define BUTTON_PIN_5 6
-#define BUTTON_PIN_6 7
-#define BUTTON_PIN_7 8
+#define BUTTON_PIN_0 1 // A
+#define BUTTON_PIN_1 2 // B
+#define BUTTON_PIN_2 3 // X
+#define BUTTON_PIN_3 4 // Y
+#define BUTTON_PIN_4 5 // L
+#define BUTTON_PIN_5 6 // R
+#define BUTTON_PIN_6 7 // Select
+#define BUTTON_PIN_7 8 // Start
 #define BUTTON_PIN_8 9
 #define BUTTON_PIN_9 10
 
@@ -21,13 +21,15 @@ const uint8_t buttonPins[NUM_BUTTONS] = {
     BUTTON_PIN_0, BUTTON_PIN_1, BUTTON_PIN_2, BUTTON_PIN_3, BUTTON_PIN_4,
     BUTTON_PIN_5, BUTTON_PIN_6, BUTTON_PIN_7, BUTTON_PIN_8, BUTTON_PIN_9};
 
-#define L2_PIN 11
-#define R2_PIN 12
+#define L2_PIN 11 // L2
+#define R2_PIN 12 // R2
 
 void probeButton(uint8_t buttonPin, uint8_t buttonNumber) {
-  if (!digitalRead(buttonPin))
+  if (!digitalRead(buttonPin)) {
+
     Gamepad.pressButton(buttonNumber);
-  else
+
+  } else
     Gamepad.releaseButton(buttonNumber);
 }
 
