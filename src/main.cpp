@@ -56,8 +56,6 @@ void probeButton(uint8_t buttonPin, uint8_t buttonNumber) {
 int8_t z = 0;
 int8_t rZ = 0;
 void probeTriggers() {
-  // This looks all wrong because the Library has a mistake. right and left
-  // Triggers are mapped wrong.
   if (!digitalRead(L2_PIN))
     z = 127;
   else
@@ -67,6 +65,8 @@ void probeTriggers() {
     rZ = 127;
   else
     rZ = -128;
+  // This looks all wrong because the Library has a mistake. right and left
+  // Triggers are mapped wrong.
   Gamepad.rightStick(z, rZ);
 }
 
