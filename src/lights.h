@@ -16,6 +16,7 @@ Adafruit_TLC5947 tlc = Adafruit_TLC5947(NUM_TLC5947, clock, data, latch);
 bool cancel = false;
 int r[10], g[10], b[10] = {0};
 StaticJsonDocument<512> doc;
+TaskHandle_t workerTaskHandle;
 
 void Delay(int x) { vTaskDelay(pdMS_TO_TICKS(x)); }
 
@@ -80,6 +81,11 @@ void fadeIn(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
       int bb = b[i] * fadeRatio;
       tlc.setLED(i >= 8 ? i + 6 : i, rr, gg, bb);
       if (cancel) {
+        for (int k = 0; k < 10; k++) {
+          r[k] = rr;
+          g[k] = gg;
+          b[k] = bb;
+        }
         return;
       }
     }
@@ -103,6 +109,11 @@ void fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
       int bb = b[i] * fadeRatio;
       tlc.setLED(i >= 8 ? i + 6 : i, rr, gg, bb);
       if (cancel) {
+        for (int k = 0; k < 10; k++) {
+          r[k] = rr;
+          g[k] = gg;
+          b[k] = bb;
+        }
         return;
       }
     }
@@ -113,31 +124,43 @@ void fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
 }
 
 void go(void *pvParameters) {
-  cancel = true;
-  Delay(50);
-  cancel = false;
-  fadeOut(255, 100, 3);
+  while (1) {
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // Wait until notified
+    cancel = true;
+    Delay(50);
+    cancel = false;
+    fadeOut(255, 100, 3);
 
-  for (int i = 0; i < 10; i++) {
-    String key = "button" + String(i + 1);
-    const char *hex = doc[key];
+    for (int i = 0; i < 10; i++) {
+      String key = "button" + String(i + 1);
+      const char *hex = doc[key];
 
-    if (hex && strlen(hex) >= 6) {
-      String hexStr(hex);
-      int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
-      int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
-      int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
+      if (hex && strlen(hex) >= 6) {
+        String hexStr(hex);
+        int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
+        int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
+        int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
 
-      r[i] = (r8 * 4095 + 127) / 255;
-      g[i] = (g8 * 4095 + 127) / 255;
-      b[i] = (b8 * 4095 + 127) / 255;
-    } else {
-      r[i] = g[i] = b[i] = 0;
+        r[i] = (r8 * 4095 + 127) / 255;
+        g[i] = (g8 * 4095 + 127) / 255;
+        b[i] = (b8 * 4095 + 127) / 255;
+      } else {
+        r[i] = g[i] = b[i] = 0;
+      }
     }
-  }
 
-  fadeIn(255, 500, 3);
-  vTaskDelete(NULL);
+    fadeIn(255, 500, 3);
+    Serial.println("=== Heap Info ===");
+    Serial.print("Free heap: ");
+    Serial.println(ESP.getFreeHeap());
+
+    Serial.print("Minimum free heap: ");
+    Serial.println(ESP.getMinFreeHeap());
+
+    Serial.print("Maximum allocatable block: ");
+    Serial.println(ESP.getMaxAllocHeap());
+    // vTaskDelete(NULL);
+  }
 }
 void stop(void *pvParameters) {
   cancel = true;
@@ -148,7 +171,7 @@ void stop(void *pvParameters) {
 }
 void lightsTask(void *pvParameters) {
   tlc.begin();
-  xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
+  xTaskCreate(go, "Go", 4096, NULL, 1, &workerTaskHandle);
   while (1) {
     if (Serial.available()) {
 
@@ -160,20 +183,7 @@ void lightsTask(void *pvParameters) {
         return;
       }
 
-      xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
-      // Debug print
-      // for (int i = 0; i < 10; i++) {
-      //   Serial.print("Button ");
-      //   Serial.print(i + 1);
-      //   Serial.print(": R=");
-      //   Serial.print(rValues[i]);
-      //   Serial.print(" G=");
-      //   Serial.print(gValues[i]);
-      //   Serial.print(" B=");
-      //   Serial.println(bValues[i]);
-      // }
-      // fadeIn(rValues, gValues, bValues, 255, 500, 3);
-      // xTaskCreate(go, "Go", 2048, NULL, 1, NULL);
+      xTaskNotifyGive(workerTaskHandle); // Tell the task to run
     }
   }
 }
