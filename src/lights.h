@@ -126,9 +126,6 @@ void fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
 void go(void *pvParameters) {
   while (1) {
     ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // Wait until notified
-    cancel = true;
-    Delay(50);
-    cancel = false;
     fadeOut(255, 100, 3);
 
     for (int i = 0; i < 10; i++) {
@@ -150,18 +147,9 @@ void go(void *pvParameters) {
     }
 
     fadeIn(255, 500, 3);
-    Serial.println("=== Heap Info ===");
-    Serial.print("Free heap: ");
-    Serial.println(ESP.getFreeHeap());
-
-    Serial.print("Minimum free heap: ");
-    Serial.println(ESP.getMinFreeHeap());
-
-    Serial.print("Maximum allocatable block: ");
-    Serial.println(ESP.getMaxAllocHeap());
-    // vTaskDelete(NULL);
   }
 }
+
 void stop(void *pvParameters) {
   cancel = true;
   Delay(50);
