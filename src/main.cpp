@@ -39,4 +39,5 @@ void loop() {
   // Serial.printf("Minimum free heap: %d\n", ESP.getMinFreeHeap());
   // Serial.printf("Maximum allocatable block: %d\n",
   //               heap_caps_get_largest_free_block(MALLOC_CAP_DEFAULT));
+  Delay(1);
 }
