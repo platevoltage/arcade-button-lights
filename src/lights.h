@@ -4,6 +4,9 @@
 #include <ArduinoJson.h>
 #include <FastLED.h>
 
+#define NOTIFY_START (1 << 0)
+#define NOTIFY_CANCEL (1 << 1)
+
 #define NUM_TLC5947 2
 
 #define data 16
@@ -55,7 +58,7 @@ void rainbowCycle(uint8_t wait) {
   }
 }
 
-void ring(int r[10], int g[10], int b[10]) {
+void ring() {
   for (int k = 0; k < 2; k++) {
     for (int j = 0; j < 8; j++) {
       for (int i = 0; i < 8; i++) {
@@ -69,8 +72,7 @@ void ring(int r[10], int g[10], int b[10]) {
   }
 }
 
-void fadeIn(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
-
+bool fadeIn(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
   for (int j = speed; j > speed - speed * ((float)amount / 255.0); j--) {
     float fadeRatio =
         pow((speed - j) / (float)speed, exponent); // Cubic ease-in
@@ -80,22 +82,23 @@ void fadeIn(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
       int gg = g[i] * fadeRatio;
       int bb = b[i] * fadeRatio;
       tlc.setLED(i >= 8 ? i + 6 : i, rr, gg, bb);
-      if (cancel) {
-        for (int k = 0; k < 10; k++) {
-          r[k] = rr;
-          g[k] = gg;
-          b[k] = bb;
-        }
-        return;
-      }
+      // if (ulNotifyValue & NOTIFY_CANCEL) {
+      //   for (int k = 0; k < 10; k++) {
+      //     r[k] = rr;
+      //     g[k] = gg;
+      //     b[k] = bb;
+      //   }
+      //   return false;
+      // }
     }
 
     tlc.write();
     Delay(5);
   }
+  return true;
 }
 
-void fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
+bool fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
 
   int steps = (float)speed * ((float)amount / 255.0);
 
@@ -108,26 +111,27 @@ void fadeOut(uint8_t amount = 255, uint16_t speed = 500, int exponent = 2) {
       int gg = g[i] * fadeRatio;
       int bb = b[i] * fadeRatio;
       tlc.setLED(i >= 8 ? i + 6 : i, rr, gg, bb);
-      if (cancel) {
-        for (int k = 0; k < 10; k++) {
-          r[k] = rr;
-          g[k] = gg;
-          b[k] = bb;
-        }
-        return;
-      }
+      // if (ulNotifyValue & NOTIFY_CANCEL) {
+      //   for (int k = 0; k < 10; k++) {
+      //     r[k] = rr;
+      //     g[k] = gg;
+      //     b[k] = bb;
+      //   }
+      //   return false;
+      // }
     }
 
     tlc.write();
     Delay(5);
   }
+  return true;
 }
 
 void go(void *pvParameters) {
+  uint32_t ulNotifyValue;
   while (1) {
-    ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // Wait until notified
-    fadeOut(255, 100, 3);
-
+    xTaskNotifyWait(0, 0xFFFFFFFF, &ulNotifyValue, portMAX_DELAY);
+    fadeOut(255, 50, 3);
     for (int i = 0; i < 10; i++) {
       String key = "button" + String(i + 1);
       const char *hex = doc[key];
@@ -146,7 +150,7 @@ void go(void *pvParameters) {
       }
     }
 
-    fadeIn(255, 500, 3);
+    fadeIn(255, 200, 3);
   }
 }
 
@@ -157,9 +161,11 @@ void stop(void *pvParameters) {
   fadeOut(255, 500, 3);
   vTaskDelete(NULL);
 }
+
 void lightsTask(void *pvParameters) {
   tlc.begin();
   xTaskCreate(go, "Go", 4096, NULL, 1, &workerTaskHandle);
+  xTaskNotify(workerTaskHandle, NOTIFY_START, eSetBits);
   while (1) {
     if (Serial.available()) {
 
@@ -171,7 +177,7 @@ void lightsTask(void *pvParameters) {
         return;
       }
 
-      xTaskNotifyGive(workerTaskHandle); // Tell the task to run
+      xTaskNotify(workerTaskHandle, NOTIFY_START, eSetBits);
     }
   }
 }
