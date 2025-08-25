@@ -100,7 +100,7 @@ void writeTask(void *pvParameters) {
 }
 
 void go(TimerHandle_t xTimer) {
-  StaticJsonDocument<512> doc;
+  JsonDocument doc;
   // Only try to parse if we actually got something
 
   DeserializationError error = deserializeJson(doc, jsonString);
