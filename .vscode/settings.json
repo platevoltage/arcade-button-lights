@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["gamepad", "Gamepad", "USBHID"]
+  "cSpell.words": ["gamepad", "Gamepad", "USBHID"],
+  "files.associations": {
+    "*.embeddedhtml": "html",
+    "*.inc": "cpp",
+    "istream": "cpp",
+    "ostream": "cpp"
+  }
 }

@@ -42,9 +42,18 @@ uint8_t buttons[NUM_BUTTONS] = {
     TOP_1_P2,    TOP_2_P2,    TOP_3_P2,    TOP_4_P2,  BOTTOM_1_P2,
     BOTTOM_2_P2, BOTTOM_3_P2, BOTTOM_4_P2, SELECT_P2, START_P2};
 
-String jsonString;
-int r[NUM_BUTTONS], g[NUM_BUTTONS], b[NUM_BUTTONS] = {0};
-int rTarget[NUM_BUTTONS], gTarget[NUM_BUTTONS], bTarget[NUM_BUTTONS] = {0};
+String jsonString =
+    "{\"button1\":\"FF0000\",\"button2\":\"FF0000\",\"button3\":\"FF0000\","
+    "\"button4\":\"FF0000\",\"button5\":\"FF0000\",\"button6\":\"FF0000\","
+    "\"button7\":\"FF0000\",\"button8\":\"FF0000\",\"button9\":\"333333\","
+    "\"button10\":\"333333\",\"button11\":\"0000FF\",\"button12\":\"0000FF\","
+    "\"button13\":\"0000FF\",\"button14\":\"0000FF\",\"button15\":\"0000FF\","
+    "\"button16\":\"0000FF\",\"button17\":\"0000FF\",\"button18\":\"0000FF\","
+    "\"button19\":\"333333\",\"button20\":\"333333\"}";
+int r[NUM_BUTTONS], g[NUM_BUTTONS], b[NUM_BUTTONS];
+int rTarget[NUM_BUTTONS];
+int gTarget[NUM_BUTTONS];
+int bTarget[NUM_BUTTONS];
 Adafruit_TLC5947 tlc = Adafruit_TLC5947(NUM_TLC5947, clock, data, latch);
 
 void Delay(int x) { vTaskDelay(pdMS_TO_TICKS(x)); }
@@ -136,6 +145,7 @@ void go(TimerHandle_t xTimer) {
 void lightsTask(void *pvParameters) {
   // StaticJsonDocument<512> doc;
   Serial.setTimeout(10); // Don't block for long
+  go(NULL);
   while (1) {
     if (Serial.available()) {
       jsonString = Serial.readStringUntil('\n');
