@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 USBHIDKeyboard Keyboard;
+bool pauseProbing = false;
 
 #define BUTTON_PIN_0_P1 6  // B // bottom row left to right
 #define BUTTON_PIN_1_P1 4  // A
@@ -73,9 +74,31 @@ void probeButton(uint8_t buttonPin, uint8_t buttonNumber) {
 
 void keyboardTask(void *pvParameters) {
   while (1) {
-    for (int i = 0; i < NUM_BUTTONS; i++) {
-      probeButton(buttonPins[i], i);
+    if (!pauseProbing) {
+      for (int i = 0; i < NUM_BUTTONS; i++) {
+        probeButton(buttonPins[i], i);
+      }
     }
     vTaskDelay(1);
   }
+}
+
+void typeKey(char key, char mod = 0) {
+  pauseProbing = true;
+  vTaskDelay(pdMS_TO_TICKS(10));
+  Keyboard.releaseAll();
+  if (mod) {
+    Keyboard.press(mod);
+  }
+  Keyboard.press(key);
+  Serial.print("Print key - ");
+  Serial.println(key);
+  vTaskDelay(pdMS_TO_TICKS(100));
+  Keyboard.release(key);
+  Serial.print("Release key - ");
+  Serial.println(key);
+  if (mod) {
+    Keyboard.release(mod);
+  }
+  pauseProbing = false;
 }

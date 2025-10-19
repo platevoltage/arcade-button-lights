@@ -3,6 +3,39 @@
 #include "lights.h"
 #include <Arduino.h>
 
+void lightsTask(void *pvParameters) {
+  // StaticJsonDocument<512> doc;
+  Serial.setTimeout(10); // Don't block for long
+  go(NULL);
+  while (1) {
+    if (Serial.available()) {
+      jsonString = Serial.readStringUntil('\n');
+      jsonString.trim();
+      if (jsonString.length() == 0)
+        continue;
+      Serial.println(jsonString);
+
+      if (jsonString[0] == '{') {
+
+        for (int i = 0; i < NUM_BUTTONS; i++) {
+          rTarget[i] = gTarget[i] = bTarget[i] = 0;
+        }
+
+        TimerHandle_t timeout =
+            xTimerCreate("Timeout", pdMS_TO_TICKS(400), pdFALSE, NULL, go);
+        xTimerStart(timeout, 0);
+      } else {
+        typeKey(jsonString[0], KEY_LEFT_SHIFT);
+        vTaskDelay(pdMS_TO_TICKS(500));
+      }
+      while (Serial.available())
+        Serial.read();
+    }
+
+    vTaskDelay(pdMS_TO_TICKS(10));
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   Serial.setTxTimeoutMs(0);

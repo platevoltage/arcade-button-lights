@@ -142,24 +142,24 @@ void go(TimerHandle_t xTimer) {
   }
 }
 
-void lightsTask(void *pvParameters) {
-  // StaticJsonDocument<512> doc;
-  Serial.setTimeout(10); // Don't block for long
-  go(NULL);
-  while (1) {
-    if (Serial.available()) {
-      jsonString = Serial.readStringUntil('\n');
-      Serial.println(jsonString);
+// void lightsTask(void *pvParameters) {
+//   // StaticJsonDocument<512> doc;
+//   Serial.setTimeout(10); // Don't block for long
+//   go(NULL);
+//   while (1) {
+//     if (Serial.available()) {
+//       jsonString = Serial.readStringUntil('\n');
+//       Serial.println(jsonString);
 
-      for (int i = 0; i < NUM_BUTTONS; i++) {
-        rTarget[i] = gTarget[i] = bTarget[i] = 0;
-      }
+//       for (int i = 0; i < NUM_BUTTONS; i++) {
+//         rTarget[i] = gTarget[i] = bTarget[i] = 0;
+//       }
 
-      TimerHandle_t timeout =
-          xTimerCreate("Timeout", pdMS_TO_TICKS(400), pdFALSE, NULL, go);
-      xTimerStart(timeout, 0);
-    }
+//       TimerHandle_t timeout =
+//           xTimerCreate("Timeout", pdMS_TO_TICKS(400), pdFALSE, NULL, go);
+//       xTimerStart(timeout, 0);
+//     }
 
-    vTaskDelay(1); // Yield to FreeRTOS scheduler
-  }
-}
+//     vTaskDelay(1); // Yield to FreeRTOS scheduler
+//   }
+// }
