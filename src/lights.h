@@ -42,19 +42,13 @@ uint8_t buttons[NUM_BUTTONS] = {
     TOP_1_P2,    TOP_2_P2,    TOP_3_P2,    TOP_4_P2,  BOTTOM_1_P2,
     BOTTOM_2_P2, BOTTOM_3_P2, BOTTOM_4_P2, SELECT_P2, START_P2};
 
-String jsonString =
-    "{\"button1\":\"FF0000\",\"button2\":\"FF0000\",\"button3\":\"FF0000\","
-    "\"button4\":\"FF0000\",\"button5\":\"FF0000\",\"button6\":\"FF0000\","
-    "\"button7\":\"FF0000\",\"button8\":\"FF0000\",\"button9\":\"333333\","
-    "\"button10\":\"333333\",\"button11\":\"0000FF\",\"button12\":\"0000FF\","
-    "\"button13\":\"0000FF\",\"button14\":\"0000FF\",\"button15\":\"0000FF\","
-    "\"button16\":\"0000FF\",\"button17\":\"0000FF\",\"button18\":\"0000FF\","
-    "\"button19\":\"333333\",\"button20\":\"333333\"}";
+String jsonString = "";
 int r[NUM_BUTTONS], g[NUM_BUTTONS], b[NUM_BUTTONS];
 int rTarget[NUM_BUTTONS];
 int gTarget[NUM_BUTTONS];
 int bTarget[NUM_BUTTONS];
 Adafruit_TLC5947 tlc = Adafruit_TLC5947(NUM_TLC5947, clock, data, latch);
+bool tlcStarted = false;
 
 void Delay(int x) { vTaskDelay(pdMS_TO_TICKS(x)); }
 
@@ -64,6 +58,9 @@ void writeTask(void *pvParameters) {
   while (1) {
 
     for (int i = 0; i < NUM_BUTTONS; i++) {
+      r[i] = rTarget[i];
+      g[i] = gTarget[i];
+      b[i] = bTarget[i];
       float rGap = rTarget[i] - r[i];
       int ratio = abs(round(rGap * .1)) + 10;
       if (rGap >= ratio) {
@@ -104,41 +101,88 @@ void writeTask(void *pvParameters) {
       // tlc.setLED(i >= 8 ? i + 4 : i + 16, r[i], g[i], b[i]);
     }
     tlc.write();
-    Delay(10);
+    // Delay(10);
   }
 }
+//{"button1":"110000","button2":"110000","button3":"110000","button4":"110000","button5":"FF0000","button6":"00FF00","button7":"110000","button8":"110000","button9":"111111","button10":"111111","button11":"000011","button12":"000011","button13":"000011","button14":"000011","button15":"FF0000","button16":"00FF00","button17":"000011","button18":"000011","button19":"111111","button20":"111111"}
 
+//{"buttons" : ["110000", "110000", "110000", "110000", "110000",
+//"110000","110000", "110000", "110000", "110000"]}
 void go(TimerHandle_t xTimer) {
+  // void go(TimerHandle_t xTimer) {
+  if (!tlcStarted) {
+    tlc.begin();
+    tlcStarted = true;
+  }
   JsonDocument doc;
   // Only try to parse if we actually got something
 
   DeserializationError error = deserializeJson(doc, jsonString);
+  // Serial.println(uxTaskGetStackHighWaterMark(NULL));
+  // Serial.println(jsonString);
   if (error) {
     Serial.println("JSON parse error");
     return; // Don't return or break the task
   }
 
-  for (int i = 0; i < NUM_BUTTONS; i++) {
-    String key = "button" + String(i + 1);
-    const char *hex = doc[key];
+  // Serial.println(jsonString);
+  // Serial.println((String)doc["buttons"]);
+  // Serial.println(doc["buttons"].size());
 
-    if (!hex) {
-      String newKey = "button" + String(i + 1 - NUM_BUTTONS / 2);
-      hex = doc[newKey];
+  uint8_t numButtons = doc["buttons"].size();
+
+  if (doc["buttons"]) {
+    for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+      // String key = "button" + String(i + 1);
+      const char *hex = doc["buttons"][i];
+
+      if (i >= numButtons) {
+        int _i = numButtons - NUM_BUTTONS + i;
+        // Serial.println(_i);
+        hex = doc["buttons"][_i];
+      }
+
+      if (hex && strlen(hex) >= 6) {
+        char buf[3] = {0};
+
+        buf[0] = hex[0];
+        buf[1] = hex[1];
+        int r8 = strtol(buf, nullptr, 16);
+
+        buf[0] = hex[2];
+        buf[1] = hex[3];
+        int g8 = strtol(buf, nullptr, 16);
+
+        buf[0] = hex[4];
+        buf[1] = hex[5];
+        int b8 = strtol(buf, nullptr, 16);
+
+        rTarget[i] = (r8 * 4095 + 127) / 255;
+        gTarget[i] = (g8 * 4095 + 127) / 255;
+        bTarget[i] = (b8 * 4095 + 127) / 255;
+        // String hexStr(hex);
+        // int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
+        // int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
+        // int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
+
+        // rTarget[i] = (r8 * 4095 + 127) / 255;
+        // gTarget[i] = (g8 * 4095 + 127) / 255;
+        // bTarget[i] = (b8 * 4095 + 127) / 255;
+      } else {
+        rTarget[i] = gTarget[i] = bTarget[i] = 0;
+      }
+      // Serial.println("SETTING");
+      // Serial.println(rTarget[i]);
+      // Serial.println(gTarget[i]);
+      // Serial.println(bTarget[i]);
+      tlc.setLED(buttons[i], rTarget[i], gTarget[i], bTarget[i]);
     }
-
-    if (hex && strlen(hex) >= 6) {
-      String hexStr(hex);
-      int r8 = strtol(hexStr.substring(0, 2).c_str(), nullptr, 16);
-      int g8 = strtol(hexStr.substring(2, 4).c_str(), nullptr, 16);
-      int b8 = strtol(hexStr.substring(4, 6).c_str(), nullptr, 16);
-
-      rTarget[i] = (r8 * 4095 + 127) / 255;
-      gTarget[i] = (g8 * 4095 + 127) / 255;
-      bTarget[i] = (b8 * 4095 + 127) / 255;
-    } else {
-      rTarget[i] = gTarget[i] = bTarget[i] = 0;
-    }
+    // Serial.println("PRINTING");
+    // Serial.println(ESP.getFreeHeap());
+    // tlc.setLED(0, 250, 0, 0);
+    tlc.write();
+  } else {
+    Serial.println("Invalid Json");
   }
 }
 

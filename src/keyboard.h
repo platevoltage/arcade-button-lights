@@ -35,7 +35,7 @@ bool pauseProbing = false;
 #define _KEY_5_P1 's'
 #define _KEY_6_P1 '1'
 #define _KEY_7_P1 '2'
-#define _KEY_8_P1 KEY_RIGHT_SHIFT
+#define _KEY_8_P1 KEY_SPACE
 #define _KEY_9_P1 KEY_RETURN
 
 #define _KEY_0_P2 't'
@@ -90,9 +90,13 @@ void typeKey(char key, char mod = 0) {
   if (mod) {
     Keyboard.press(mod);
   }
+
   Keyboard.press(key);
+
   Serial.print("Print key - ");
-  Serial.println(key);
+  Serial.print(key);
+  Serial.print(" - ");
+  Serial.println(key, HEX);
   vTaskDelay(pdMS_TO_TICKS(100));
   Keyboard.release(key);
   Serial.print("Release key - ");
