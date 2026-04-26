@@ -1,4 +1,5 @@
 
+#include "pins.h"
 #include <Adafruit_TLC5947.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
@@ -7,10 +8,6 @@
 #define NUM_TLC5947 3
 
 #define NUM_BUTTONS 20
-
-#define data 16
-#define clock 18
-#define latch 35
 
 #define STEP 200
 
@@ -47,7 +44,9 @@ int r[NUM_BUTTONS], g[NUM_BUTTONS], b[NUM_BUTTONS];
 int rTarget[NUM_BUTTONS];
 int gTarget[NUM_BUTTONS];
 int bTarget[NUM_BUTTONS];
-Adafruit_TLC5947 tlc = Adafruit_TLC5947(NUM_TLC5947, clock, data, latch);
+Adafruit_TLC5947 tlc =
+    Adafruit_TLC5947(NUM_TLC5947, BUTTON_LIGHTS_CLOCK_PIN,
+                     BUTTON_LIGHTS_DATA_PIN, BUTTON_LIGHTS_LATCH_PIN);
 bool tlcStarted = false;
 
 void Delay(int x) { vTaskDelay(pdMS_TO_TICKS(x)); }

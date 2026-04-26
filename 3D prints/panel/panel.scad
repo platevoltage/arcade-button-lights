@@ -23,8 +23,9 @@ module trapezoid_top_curved() {
     );
 
     polygon(points);
+    polygon(points=[bottom_left, bottom_right, top_right, top_left]);
 }
 
 // Extrude to 3D
-linear_extrude(height=50)
+linear_extrude(height=200, center = true, convexity = 10, scale= .8)
     trapezoid_top_curved();
