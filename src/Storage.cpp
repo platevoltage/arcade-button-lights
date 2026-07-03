@@ -205,6 +205,13 @@ int32_t Storage::write_ram_file(const char *filename_8_3, const uint8_t *buf,
       memcpy(entry, filename_8_3, 11);
       entry[11] = 0x20; // ATTR_ARCHIVE
       memset(entry + 12, 0, 20);
+      uint16_t date = ((2025 - 1980) << 9) | (1 << 5) | 1; // 2025-01-01
+      uint16_t time = (12 << 11) | (0 << 5) | 0;           // 12:00:00
+
+      entry[22] = time & 0xFF;
+      entry[23] = (time >> 8) & 0xFF;
+      entry[24] = date & 0xFF;
+      entry[25] = (date >> 8) & 0xFF;
       entry[26] = first_cluster & 0xFF;
       entry[27] = (first_cluster >> 8) & 0xFF;
       entry[28] = size & 0xFF;
