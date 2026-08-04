@@ -675,7 +675,7 @@
         "uuid": "cc983bc6-e536-4497-b4ea-da3903beba0b"
       }
     ],
-    "used_designators": "Module1,R6-12,H1-5,D1,C3-5,C7-24,U1,U8-10,Y1-3,J2-4,J8-17",
+    "used_designators": "Module1,R1-3,R6-12,H1-5,#PWR3-4,#PWR101,#PWR104-105,#PWR109-111,#PWR128-131,#PWR136-138,D1-2,C3-5,C7-24,TP3,U1,U8-13,Y1-3,J2-4,J8-20,J22",
     "variants": []
   },
   "sheets": [
