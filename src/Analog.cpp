@@ -94,11 +94,19 @@ void Analog::task() {
   }
 
   // if (abs(event.magnetic.x) > 5000 || abs(event.magnetic.y) > 5000) {
-  // Serial.print("X: ");
-  // Serial.print(x);
-  // Serial.print(" \tY: ");
-  // Serial.print(y);
-  // // }
-  // Serial.print(" \tZ: ");
-  // Serial.println(event.magnetic.z);
+  Serial.print("X: ");
+  Serial.print(x);
+  Serial.print(" \tY: ");
+  Serial.print(y);
+  Serial.print(" \tZ: ");
+  Serial.println(event.magnetic.z);
+  // }
+
+  // if (event.magnetic.z == 0) {
+  if (!sensor.getEvent(&event)) {
+    Serial.println("Sensor read failed, reinitializing");
+    rp2040.reboot();
+  }
+  // Serial.println("should reset");
+  // }
 };

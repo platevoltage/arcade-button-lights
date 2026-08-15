@@ -8,7 +8,7 @@
 #include "Storage.h"
 
 bool core1_separate_stack = true;
-Adafruit_MLX90393 sensor = Adafruit_MLX90393();
+// Adafruit_MLX90393 sensor = Adafruit_MLX90393();
 // #define MLX90393_CS 17
 // HC4067 mp(2, 3, 4, 5, 6); //  enable pin(8)
 
@@ -23,11 +23,11 @@ void setup() {
   USBDevice.setManufacturerDescriptor("Laika");
   USBDevice.setProductDescriptor("Arcade Panel");
 
-  player1.begin();
-  player2.begin();
-  keyboard.begin();
-  storage.begin();
-
+  // player1.begin();
+  // player2.begin();
+  // keyboard.begin();
+  // storage.begin();
+  analog.begin();
   // delay(5000);
   Serial.print("Free stack: ");
   Serial.println(rp2040.getFreeStack());
@@ -42,10 +42,11 @@ void setup() {
 }
 
 void loop() {
-  player1.task();
-  player2.task();
-  storage.task();
-  serialReader.task();
+  analog.task();
+  // player1.task();
+  // player2.task();
+  // storage.task();
+  // serialReader.task();
 
   // Serial.println("hello world!");
   // Serial1.println("hello world11!");
@@ -68,7 +69,7 @@ void loop() {
 // NO USB STUFF ON CORE 1
 void setup1() {
   delay(5000);
-  analog.begin();
+  // analog.begin();
   // lights.begin();
   //
 }
@@ -77,5 +78,5 @@ void loop1() {
   // Serial.println("loop 1");
   // Serial1.println("hello world1!");
 
-  analog.task();
+  // analog.task();
 }
