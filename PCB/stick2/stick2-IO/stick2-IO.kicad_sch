@@ -6462,6 +6462,17 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "mounting_hardware/mounting_hole"
+			(at 81.28 -20.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(instances
 			(project "stick2-IO"
 				(path "/1e2bb969-b4ff-4a72-aca8-605fc09370f3"
@@ -6866,6 +6877,17 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 80.01 -27.94 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KiLib_Generator" "mounting_hardware/mounting_hole"
 			(at 80.01 -27.94 0)
 			(hide yes)
 			(show_name no)
@@ -7435,6 +7457,17 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "mounting_hardware/mounting_hole"
+			(at 82.55 -11.43 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(instances
 			(project "stick2-IO"
 				(path "/1e2bb969-b4ff-4a72-aca8-605fc09370f3"
@@ -7501,6 +7534,17 @@
 			)
 		)
 		(property "Description" "Mounting Hole without connection"
+			(at 80.01 -34.29 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "KiLib_Generator" "mounting_hardware/mounting_hole"
 			(at 80.01 -34.29 0)
 			(hide yes)
 			(show_name no)
@@ -7649,7 +7693,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x16_P2.54mm_Vertical"
+		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical"
 			(at 26.67 111.76 0)
 			(hide yes)
 			(show_name no)
@@ -7671,7 +7715,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x16, script generated"
+		(property "Description" ""
 			(at 26.67 111.76 0)
 			(hide yes)
 			(show_name no)

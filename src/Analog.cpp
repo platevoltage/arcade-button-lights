@@ -23,15 +23,15 @@ void Analog::begin() {
   sensor.setGain(MLX90393_GAIN_5X);
 
   // Set resolution, per axis. Aim for sensitivity of ~0.3 for all axes.
-  sensor.setResolution(MLX90393_X, MLX90393_RES_18);
-  sensor.setResolution(MLX90393_Y, MLX90393_RES_18);
+  sensor.setResolution(MLX90393_X, MLX90393_RES_19);
+  sensor.setResolution(MLX90393_Y, MLX90393_RES_19);
   sensor.setResolution(MLX90393_Z, MLX90393_RES_16);
 
   // Set oversampling
   sensor.setOversampling(MLX90393_OSR_3);
 
   // Set digital filtering
-  sensor.setFilter(MLX90393_FILTER_0);
+  sensor.setFilter(MLX90393_FILTER_1);
 };
 
 // void pressButton(hid_gamepad_button_bm_t buttonIndex) {
@@ -55,14 +55,19 @@ void releaseButton(hid_gamepad_button_bm_t buttonIndex) {
 //   // usb_hid.sendReport(0, &gp, sizeof(gp));
 // }
 
+#define X_ADJUST 1660
+#define Y_ADJUST 100
+
 void Analog::task() {
 
   sensors_event_t event;
   sensor.getEvent(&event);
-  /* Display the results (magnetic field is measured in uTesla) */
 
-  float x = event.magnetic.x / 400.0f;
-  float y = -event.magnetic.y / 400.0f;
+  float xRawAdjusted = event.magnetic.x + X_ADJUST;
+  float yRawAdjusted = -event.magnetic.y + Y_ADJUST;
+
+  int16_t x = xRawAdjusted / 200.0f;
+  int16_t y = yRawAdjusted / 200.0f;
 
   if (x > 127)
     x = 127;
@@ -96,17 +101,24 @@ void Analog::task() {
   // if (abs(event.magnetic.x) > 5000 || abs(event.magnetic.y) > 5000) {
   Serial.print("X: ");
   Serial.print(x);
+  Serial.print(" / ");
+  Serial.print(xRawAdjusted);
   Serial.print(" \tY: ");
   Serial.print(y);
+  Serial.print(" / ");
+  Serial.print(yRawAdjusted);
   Serial.print(" \tZ: ");
-  Serial.println(event.magnetic.z);
+  Serial.print(event.magnetic.z);
+  Serial.print(" \tT: ");
+  Serial.print(event.temperature);
+  Serial.println();
   // }
 
   // if (event.magnetic.z == 0) {
-  if (!sensor.getEvent(&event)) {
-    Serial.println("Sensor read failed, reinitializing");
-    rp2040.reboot();
-  }
+  // if (!sensor.getEvent(&event)) {
+  //   Serial.println("Sensor read failed, reinitializing");
+  //   rp2040.reboot();
+  // }
   // Serial.println("should reset");
   // }
 };
