@@ -1,6 +1,6 @@
 
 $fn = 100; 
-// color(c = "#440000")  rotate([180, 0, 270]) translate([-40, -20, -1.5]) import("main-board.stl");
+color(c = "#440000")  rotate([180, 0, 270]) translate([-40, -20, -1.5]) import("main-board.stl");
 
 // difference() {
 //     color(c = "#440000")  rotate([180, 0, 270]) translate([-40, -20, -1.5]) import("main-board.stl");
@@ -8,34 +8,34 @@ $fn = 100;
 // }
 
 
-// color(c = "#004400")  rotate([90, 0, 270]) translate([-137.5, 50, -33.5]) import("io-board.stl");
+color(c = "#004400")  rotate([90, 0, 270]) translate([-137.5, 50, -33.5]) import("io-board.stl");
 
 // color(c = "#ffff4444")  rotate([180, 0, 0]) translate([-110, -110, 13]) import("base.stl");
 
 difference() {
     union() {
         for (r = [0, 180])
-            rotate([0, 0, r]) translate([25, -12.5, -19.5]) linear_extrude(height = 18) square([2, 6]);
+            rotate([0, 0, r]) translate([25, -12.5, -14]) linear_extrude(height = 14) square([2, 6]);
 
-        for (r = [0, 180])
-            rotate([0, 0, r]) translate([25, -12.5, -12]) linear_extrude(height = 8) square([8, 6]);
-        translate([0, 0, -10]) linear_extrude(height = 10) square([64, 76], center=true);
+        // for (r = [0, 180])
+        //     rotate([0, 0, r]) translate([25, -12.5, -12]) linear_extrude(height = 8) square([8, 6]);
+        translate([0, 0, -8]) linear_extrude(height = 9) square([64, 76], center=true);
         for (r = [0, 180])
             rotate([0, 0, r]) translate([0, 35, -39]) linear_extrude(height = 39) square([64, 6], center=true);
         for (r = [0, 180])
             rotate([0, 0, r]) translate([0, -32.5, -38]) linear_extrude(height = 38) circle(d = 10);
         for (r = [0, 180])
-            rotate([0, 0, r]) translate([-8, 20, -13]) linear_extrude(height = 12) square([12, 16]);
+            rotate([0, 0, r]) translate([-8, 20, -12]) linear_extrude(height = 12) square([12, 16]);
     }
 
     union() {
-        translate([0, 0, -10]) linear_extrude(height = 20) square([49.5, 49.5], center=true);
+        translate([0, 0, -9]) linear_extrude(height = 20) square([49.5, 49.5], center=true);
         for (r = [0, 180])
             rotate([0, 0, r]) translate([0, 32.5, -36]) linear_extrude(height = 40) circle(d = 6.5);
         for (r = [0, 180])
-            rotate([0, 0, r]) translate([-9.25, 27, -10]) linear_extrude(height = 40) square([31, 6], center=true);
+            rotate([0, 0, r]) translate([-9.25, 27, -9]) linear_extrude(height = 40) square([31, 6], center=true);
         for (r = [0, 180])
-            rotate([0, 0, r]) translate([0, 29, -36]) linear_extrude(height = 20) square([10, 6], center=true);
+            rotate([0, 0, r]) translate([0, 29, -36]) linear_extrude(height = 24) square([10, 6], center=true);
 
         for (r = [0, 180])
             rotate([0, 0, r]) translate([-1, 35, -47]) linear_extrude(height = 15) square([17, 20], center=true);
